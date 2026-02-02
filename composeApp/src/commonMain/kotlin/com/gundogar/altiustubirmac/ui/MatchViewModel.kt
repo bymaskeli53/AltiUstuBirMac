@@ -2,8 +2,10 @@ package com.gundogar.altiustubirmac.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gundogar.altiustubirmac.data.AppException
 import com.gundogar.altiustubirmac.data.MatchRepository
 import com.gundogar.altiustubirmac.data.MatchUiModel
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -37,9 +39,18 @@ class MatchViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val matches = repository.fetchMatches()
-                _uiState.value = MatchUiState.Success(matches)
+                if (matches.isEmpty()) {
+                    _uiState.value = MatchUiState.Error(AppException.EmptyData.message)
+                } else {
+                    _uiState.value = MatchUiState.Success(matches)
+                }
+                /**
+                 * Cancellation exception should rethrow again
+                 */
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                _uiState.value = MatchUiState.Error(e.message ?: "Bilinmeyen hata")
+                _uiState.value = MatchUiState.Error(AppException.from(e).message)
             }
         }
     }

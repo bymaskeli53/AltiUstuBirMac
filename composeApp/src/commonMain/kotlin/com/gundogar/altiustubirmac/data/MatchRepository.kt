@@ -30,37 +30,9 @@ class MatchRepository {
             "https://sportsbookv2.iddaa.com/sportsbook/events?st=1&type=0&version=0"
         ).body()
 
-        println("Apiden gelen maç sayısı" + response.data.events.size)
-        val skippedEvents = response.data.events.filter { event ->
-            event.m.none { m -> m.t == 2 && m.st == 101 && m.sov == "2.5" }
-        }
-
-        println("❌ 2.5 marketi olmayan event sayısı: ${skippedEvents.size}")
-
-
-        println("❌ 2.5 marketi olmayan event sayısı: ${skippedEvents.size}")
-        skippedEvents.forEach { event ->
-            println("  → ${event.hn} - ${event.an}")
-            // Bu eventlerde hangi st=101 marketleri var?
-            val altUstMarkets = event.m.filter { it.st == 101 }
-            if (altUstMarkets.isEmpty()) {
-                println("    ⚠️ Hiç Alt/Üst (st=101) marketi yok")
-            } else {
-                altUstMarkets.forEach { m ->
-                    println("    📌 st=101, sov=${m.sov}, t=${m.t}")
-                }
-            }
-        }
-
-        val result = response.data.events.mapNotNull {  }
-        println("✅ UI'a giden event sayısı: ${result.size}")
-        println("📊 ${response.data.events.size} - ${skippedEvents.size} = ${result.size}")
-
         response.data.events.mapNotNull { event ->
             val market = event.m.firstOrNull { it.t == 2 && it.st == 101 && it.sov == "2.5" }
                 ?: return@mapNotNull null
-
-
 
             val underOdd = market.o.firstOrNull { it.no == 1 }?.wodd ?: return@mapNotNull null
             val overOdd = market.o.firstOrNull { it.no == 2 }?.wodd ?: return@mapNotNull null
