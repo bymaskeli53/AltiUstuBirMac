@@ -1,5 +1,7 @@
 package com.gundogar.altiustubirmac
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 
 class AndroidPlatform : Platform {
@@ -7,3 +9,11 @@ class AndroidPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
+
+actual fun openUrl(url: String) {
+    val context = ApplicationContextProvider.context
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    context.startActivity(intent)
+}

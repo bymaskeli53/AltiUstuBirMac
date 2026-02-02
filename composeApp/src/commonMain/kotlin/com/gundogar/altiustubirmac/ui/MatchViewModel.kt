@@ -21,6 +21,13 @@ class MatchViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<MatchUiState>(MatchUiState.Loading)
     val uiState: StateFlow<MatchUiState> = _uiState
 
+    private val _shouldShowInfoMessage = MutableStateFlow(true)
+    val shouldShowInfoMessage: StateFlow<Boolean> = _shouldShowInfoMessage
+
+    fun infoMessageShown() {
+        _shouldShowInfoMessage.value = false
+    }
+
     init {
         loadMatches()
     }

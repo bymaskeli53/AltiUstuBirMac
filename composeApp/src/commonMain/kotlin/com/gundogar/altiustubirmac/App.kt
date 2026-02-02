@@ -17,11 +17,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,52 +49,79 @@ private val DarkColors = darkColorScheme()
 fun App(viewModel: MatchViewModel = viewModel { MatchViewModel() }) {
     MaterialTheme(colorScheme = DarkColors) {
         val uiState by viewModel.uiState.collectAsState()
+        val shouldShowInfo by viewModel.shouldShowInfoMessage.collectAsState()
+        val snackbarHostState = remember { SnackbarHostState() }
 
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .safeContentPadding()
-                .fillMaxSize()
-        ) {
-            Text(
-                text = "2.5 Alt/Ust Oranlari",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(16.dp)
-            )
-
-            when (val state = uiState) {
-                is MatchUiState.Loading -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
+        LaunchedEffect(shouldShowInfo) {
+            if (shouldShowInfo) {
+                val result = snackbarHostState.showSnackbar(
+                    message = "Bu uygulamada sadece 2.5 Alt/Ust goruntuleyebilirsiniz.",
+                    actionLabel = "Misliye Git",
+                    duration = SnackbarDuration.Long
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    openUrl("https://www.misli.com/iddaa/futbol")
                 }
+                viewModel.infoMessageShown()
+            }
+        }
 
-                is MatchUiState.Error -> {
-                    Column(
-                        Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = state.message,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        Button(onClick = { viewModel.loadMatches() }) {
-                            Text("Tekrar Dene")
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            containerColor = MaterialTheme.colorScheme.background
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .safeContentPadding()
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            ) {
+                Text(
+                    text = "2.5 Alt/Ust Oranlari",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(16.dp)
+                )
+
+                when (val state = uiState) {
+                    is MatchUiState.Loading -> {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
                         }
                     }
-                }
 
-                is MatchUiState.Success -> {
-                    LazyColumn(Modifier.fillMaxSize()) {
-                        items(
-                            items = state.matches,
-                            key = { it.id }
-                        ) { match ->
-                            MatchRow(match)
-                            HorizontalDivider(color = Color.DarkGray.copy(alpha = 0.5f))
+                    is MatchUiState.Error -> {
+                        Column(
+                            Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = state.message,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            Button(onClick = { viewModel.loadMatches() }) {
+                                Text("Tekrar Dene")
+                            }
+                        }
+                    }
+
+                    is MatchUiState.Success -> {
+                        Text(
+                            text = "${state.matches.size} mac bulundu",
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                        )
+                        LazyColumn(Modifier.fillMaxSize()) {
+                            items(
+                                items = state.matches,
+                                key = { it.id }
+                            ) { match ->
+                                MatchRow(match)
+                                HorizontalDivider(color = Color.DarkGray.copy(alpha = 0.5f))
+                            }
                         }
                     }
                 }

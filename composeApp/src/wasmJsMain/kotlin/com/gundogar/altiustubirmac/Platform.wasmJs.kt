@@ -5,3 +5,7 @@ class WasmPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = WasmPlatform()
+
+actual fun openUrl(url: String) {
+    kotlinx.browser.window.open(url, "_blank")
+}
