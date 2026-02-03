@@ -15,6 +15,7 @@ A Kotlin Multiplatform application that displays 2.5 Over/Under betting odds for
 - Pull-to-refresh on mobile platforms
 - Dark theme UI
 - Cross-platform support (Android, iOS, Web)
+- Viewmodel functionality tested with Unit Test
 
 ## Tech Stack
 
@@ -24,6 +25,9 @@ A Kotlin Multiplatform application that displays 2.5 Over/Under betting odds for
 - **[Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)** - JSON parsing
 - **[Koin](https://insert-koin.io/)** - Dependency injection
 - **[Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html)** - Asynchronous programming
+- **[Coroutines Test](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-test/)** - Required to test UI states
+
+
 
 ## Project Structure
 
