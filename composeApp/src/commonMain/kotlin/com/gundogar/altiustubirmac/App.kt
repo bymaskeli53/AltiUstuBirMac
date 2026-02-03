@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gundogar.altiustubirmac.data.MatchUiModel
 import com.gundogar.altiustubirmac.di.appModule
+import com.gundogar.altiustubirmac.di.viewModelModule
 import com.gundogar.altiustubirmac.ui.MatchUiState
 import com.gundogar.altiustubirmac.ui.MatchViewModel
 import org.koin.compose.KoinApplication
@@ -54,8 +55,12 @@ private val DarkColors = darkColorScheme()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App() {
-    KoinApplication(application = { modules(appModule) }) {
+fun App(useKoinApplication: Boolean = true) {
+    if (useKoinApplication) {
+        KoinApplication(application = { modules(appModule, viewModelModule) }) {
+            AppContent()
+        }
+    } else {
         AppContent()
     }
 }
