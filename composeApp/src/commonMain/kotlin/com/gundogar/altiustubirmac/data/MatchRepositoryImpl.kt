@@ -20,7 +20,12 @@ class MatchRepositoryImpl(
             "https://sportsbookv2.iddaa.com/sportsbook/events?st=1&type=0&version=0"
         ).body()
 
-        response.data.events.mapNotNull { event ->
+        filterMatchData(response)
+
+    }
+
+    private fun filterMatchData(response: ApiResponse) : List<MatchUiModel> {
+        return response.data.events.mapNotNull { event ->
             /**
              * Filter criteria from iddaa API:
              * - t=2: Pre-match market type
