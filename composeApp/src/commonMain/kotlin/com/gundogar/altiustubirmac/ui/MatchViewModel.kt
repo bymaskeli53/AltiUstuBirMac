@@ -52,11 +52,12 @@ class MatchViewModel(
                 } else {
                     val filtered = state.matches.filter { match ->
                         match.homeTeam.contains(query, ignoreCase = true) ||
-                            match.awayTeam.contains(query, ignoreCase = true)
+                                match.awayTeam.contains(query, ignoreCase = true)
                     }
                     state.copy(matches = filtered)
                 }
             }
+
             else -> state
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MatchUiState.Loading)

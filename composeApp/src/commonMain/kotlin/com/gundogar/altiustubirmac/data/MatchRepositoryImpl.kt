@@ -7,6 +7,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToLong
 
+const val UNDER_ODD = 1
+const val OVER_ODD = 2
+
+const val TYPE_NUMBER = 2
+
+const val SUB_TYPE_NUMBER = 101
+
 class MatchRepositoryImpl(
     private val client: HttpClient
 ) : MatchRepository {
@@ -24,7 +31,7 @@ class MatchRepositoryImpl(
 
     }
 
-    private fun filterMatchData(response: ApiResponse) : List<MatchUiModel> {
+    private fun filterMatchData(response: ApiResponse): List<MatchUiModel> {
         return response.data.events.mapNotNull { event ->
             /**
              * Filter criteria from iddaa API:
@@ -32,11 +39,13 @@ class MatchRepositoryImpl(
              * - st=101: Over/Under market subtype
              * - sov="2.5": The 2.5 goal threshold (app's core feature)
              */
-            val market = event.m.firstOrNull { it.t == 2 && it.st == 101 && it.sov == "2.5" }
-                ?: return@mapNotNull null
+            val market =
+                event.m.firstOrNull { it.t == TYPE_NUMBER && it.st == SUB_TYPE_NUMBER && it.sov == "2.5" }
+                    ?: return@mapNotNull null
 
-            val underOdd = market.o.firstOrNull { it.no == 1 }?.wodd ?: return@mapNotNull null
-            val overOdd = market.o.firstOrNull { it.no == 2 }?.wodd ?: return@mapNotNull null
+            val underOdd =
+                market.o.firstOrNull { it.no == UNDER_ODD }?.wodd ?: return@mapNotNull null
+            val overOdd = market.o.firstOrNull { it.no == OVER_ODD }?.wodd ?: return@mapNotNull null
 
             MatchUiModel(
                 id = event.i,
