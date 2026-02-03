@@ -13,12 +13,21 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/**
+ * Sealed class ensures exhaustive `when` expressions at compile time.
+ * Adding a new state forces all consumers to handle it, preventing runtime crashes.
+ */
 sealed class MatchUiState {
     data object Loading : MatchUiState()
     data class Success(val matches: List<MatchUiModel>) : MatchUiState()
     data class Error(val message: String) : MatchUiState()
 }
 
+/**
+ * Uses constructor injection instead of Koin's viewModelOf() because viewModelOf()
+ * has IrLinkageError issues on WASM due to ViewModelStoreOwner linkage problems.
+ * factoryOf() with koinInject() works across all platforms (Android, iOS, Web).
+ */
 class MatchViewModel(
     private val repository: MatchRepository
 ) : ViewModel() {
@@ -28,6 +37,13 @@ class MatchViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
+    /**
+     * Search filtering is done via [combine] instead of re-fetching from API.
+     * This provides instant filtering without network latency and reduces API load.
+     *
+     * WhileSubscribed(5000) keeps the flow active for 5 seconds after the last subscriber
+     * disconnects, surviving configuration changes without re-computation.
+     */
     val uiState: StateFlow<MatchUiState> = combine(_uiState, _searchQuery) { state, query ->
         when (state) {
             is MatchUiState.Success -> {
@@ -83,7 +99,8 @@ class MatchViewModel(
                     _uiState.value = MatchUiState.Success(matches)
                 }
                 /**
-                 * Cancellation exception should rethrow again
+                 * CancellationException must be rethrown - swallowing it breaks structured
+                 * concurrency and can cause coroutine leaks when ViewModel is cleared.
                  */
             } catch (e: CancellationException) {
                 throw e

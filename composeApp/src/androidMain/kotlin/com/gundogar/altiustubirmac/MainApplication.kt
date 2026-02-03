@@ -7,6 +7,11 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
+/**
+ * Android initializes Koin here instead of KoinApplication composable
+ * to provide androidContext() which is needed for platform-specific features
+ * like opening URLs via Intent. App.kt is called with useKoinApplication=false.
+ */
 class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()

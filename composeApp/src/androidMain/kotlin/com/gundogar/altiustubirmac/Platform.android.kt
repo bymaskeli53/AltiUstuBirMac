@@ -13,6 +13,10 @@ class AndroidPlatform : Platform {
 
 actual fun getPlatform(): Platform = AndroidPlatform()
 
+/**
+ * KoinComponent allows accessing Koin dependencies outside of composables.
+ * Context is injected from androidContext() set in MainApplication.
+ */
 private object UrlOpener : KoinComponent {
     val context: Context by inject()
 }

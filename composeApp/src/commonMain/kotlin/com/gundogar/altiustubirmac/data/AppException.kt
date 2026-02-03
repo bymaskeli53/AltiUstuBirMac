@@ -6,6 +6,13 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 
+/**
+ * Sealed class provides type-safe error handling with exhaustive `when` expressions.
+ * Turkish messages are used because this is the target audience.
+ *
+ * The companion object's [from] function centralizes exception mapping,
+ * ensuring consistent error handling across the app.
+ */
 sealed class AppException(override val message: String) : Exception(message) {
 
     data object NoInternet : AppException("Internetiniz yok. Lutfen baglantinizi kontrol edin.")

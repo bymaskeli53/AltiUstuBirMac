@@ -11,12 +11,22 @@ class MatchRepositoryImpl(
     private val client: HttpClient
 ) : MatchRepository {
 
+    /**
+     * Dispatchers.Default is used because JSON parsing is CPU-bound work.
+     * Ktor's network call internally uses appropriate IO dispatcher.
+     */
     override suspend fun fetchMatches(): List<MatchUiModel> = withContext(Dispatchers.Default) {
         val response: ApiResponse = client.get(
             "https://sportsbookv2.iddaa.com/sportsbook/events?st=1&type=0&version=0"
         ).body()
 
         response.data.events.mapNotNull { event ->
+            /**
+             * Filter criteria from iddaa API:
+             * - t=2: Pre-match market type
+             * - st=101: Over/Under market subtype
+             * - sov="2.5": The 2.5 goal threshold (app's core feature)
+             */
             val market = event.m.firstOrNull { it.t == 2 && it.st == 101 && it.sov == "2.5" }
                 ?: return@mapNotNull null
 
@@ -33,6 +43,10 @@ class MatchRepositoryImpl(
         }
     }
 
+    /**
+     * Manual formatting because String.format() is not available in Kotlin common code.
+     * Ensures consistent 2 decimal places across all platforms.
+     */
     private fun formatOdd(value: Double): String {
         val rounded = (value * 100).roundToLong()
         val whole = rounded / 100

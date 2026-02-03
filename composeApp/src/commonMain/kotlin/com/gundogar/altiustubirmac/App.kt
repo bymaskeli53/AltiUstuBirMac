@@ -53,6 +53,11 @@ import org.koin.compose.koinInject
 
 private val DarkColors = darkColorScheme()
 
+/**
+ * [useKoinApplication] parameter allows Android to skip KoinApplication wrapper
+ * since Android initializes Koin in MainApplication with androidContext().
+ * iOS and Web use the wrapper because they don't have an Application class.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(useKoinApplication: Boolean = true) {
@@ -65,6 +70,10 @@ fun App(useKoinApplication: Boolean = true) {
     }
 }
 
+/**
+ * koinInject() is used instead of koinViewModel() for cross-platform compatibility.
+ * koinViewModel() has IrLinkageError issues on WASM.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppContent(viewModel: MatchViewModel = koinInject()) {
