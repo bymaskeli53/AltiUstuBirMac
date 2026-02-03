@@ -19,9 +19,9 @@ sealed class MatchUiState {
     data class Error(val message: String) : MatchUiState()
 }
 
-class MatchViewModel : ViewModel() {
-
-    private val repository = MatchRepository()
+class MatchViewModel(
+    private val repository: MatchRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<MatchUiState>(MatchUiState.Loading)
 

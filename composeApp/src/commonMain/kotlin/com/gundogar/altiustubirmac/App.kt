@@ -43,16 +43,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gundogar.altiustubirmac.data.MatchUiModel
+import com.gundogar.altiustubirmac.di.appModule
 import com.gundogar.altiustubirmac.ui.MatchUiState
 import com.gundogar.altiustubirmac.ui.MatchViewModel
+import org.koin.compose.KoinApplication
+import org.koin.compose.koinInject
 
 private val DarkColors = darkColorScheme()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun App(viewModel: MatchViewModel = viewModel { MatchViewModel() }) {
+fun App() {
+    KoinApplication(application = { modules(appModule) }) {
+        AppContent()
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppContent(viewModel: MatchViewModel = koinInject()) {
     MaterialTheme(colorScheme = DarkColors) {
         val uiState by viewModel.uiState.collectAsState()
         val shouldShowInfo by viewModel.shouldShowInfoMessage.collectAsState()
