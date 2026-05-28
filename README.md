@@ -1,6 +1,6 @@
 # 2.5 Alt/Ust
 
-A Kotlin Multiplatform application that displays 2.5 Over/Under betting odds for football matches from iddaa.com.
+A Kotlin Multiplatform application that displays 2.5 Over/Under betting odds for football matches.
 
 ## Screenshots
 
