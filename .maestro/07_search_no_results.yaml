@@ -1,0 +1,25 @@
+appId: com.gundogar.altiustubirmac
+---
+
+# Test: Search with non-matching query shows zero results
+- launchApp
+- assertVisible: "2.5 Alt/Ust Oranlari"
+
+# Wait for matches to load
+- assertVisible:
+    text: ".*mac bulundu.*"
+
+# Search for a team that doesn't exist
+- tapOn: "Takim ara..."
+- inputText: "xyznonexistentteam"
+
+# Should show "0 mac bulundu"
+- assertVisible: "0 mac bulundu"
+- hideKeyboard
+
+# Clear search
+- tapOn:
+    text: "X"
+
+# Search field should be cleared, placeholder visible again
+- assertVisible: "Takim ara..."

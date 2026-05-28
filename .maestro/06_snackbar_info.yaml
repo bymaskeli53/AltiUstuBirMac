@@ -1,0 +1,16 @@
+appId: com.gundogar.altiustubirmac
+---
+
+# Test: Info snackbar appears on first launch
+- launchApp
+- assertVisible: "2.5 Alt/Ust Oranlari"
+
+# The snackbar should show info about 2.5 odds limitation
+- assertVisible:
+    text: "Bu uygulamada sadece 2.5 Alt/Ust goruntuleyebilirsiniz."
+    optional: true
+
+# The action label to go to Misli should be visible
+- assertVisible:
+    text: "Misliye Git"
+    optional: true

@@ -1,0 +1,11 @@
+appId: com.gundogar.altiustubirmac
+---
+
+# Test: Match list displays odds labels correctly
+- launchApp
+- assertVisible: "2.5 Alt/Ust Oranlari"
+
+
+# Verify Alt and Ust labels are visible in the match rows
+- assertVisible: "Alt"
+- assertVisible: "Ust"

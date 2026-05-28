@@ -1,0 +1,26 @@
+appId: com.gundogar.altiustubirmac
+---
+
+# Test: Match list is scrollable
+- launchApp
+- assertVisible: "2.5 Alt/Ust Oranlari"
+
+# Wait for data to load
+- assertVisible:
+    text: ".*mac bulundu.*"
+
+# Scroll down through the list
+- scroll
+
+# After scrolling, odds labels should still be present
+- assertVisible: "Alt"
+- assertVisible: "Ust"
+
+# Scroll back up
+- swipe:
+    direction: UP
+    duration: 1000
+
+# Title and search should still be visible
+- assertVisible: "2.5 Alt/Ust Oranlari"
+- assertVisible: "Takim ara..."

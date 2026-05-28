@@ -1,0 +1,9 @@
+appId: com.gundogar.altiustubirmac
+---
+
+# Test: App launches and displays match list
+- launchApp
+- assertVisible: "2.5 Alt/Ust Oranlari"
+- assertVisible: "Takim ara..."
+- assertVisible:
+    text: ".*mac bulundu"

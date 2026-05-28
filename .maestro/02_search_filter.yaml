@@ -1,0 +1,17 @@
+appId: com.gundogar.altiustubirmac
+---
+
+# Test: Search filters matches by team name
+- launchApp
+
+# Tap search field and type a query
+- tapOn: "Takim ara..."
+- inputText: "Metapan"
+
+- hideKeyboard
+# Clear search with the X button
+- tapOn:
+    text: "X"
+
+# Search field should be cleared, placeholder visible again
+- assertVisible: "Takim ara..."
